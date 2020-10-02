@@ -1,17 +1,19 @@
 {
   "name": "ses-demo",
   "version": "1.0.0",
-  "description": "Serverless webpack example using Typescript",
+  "description": "AWS SES example implemention",
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "code:check": "yarn code:lint; yarn code:format --check",
-    "code:clean": "yarn code:lint --fix; yarn code:format --write",
+    "code:check": "yarn code:lint && yarn code:format --check",
+    "code:clean": "yarn code:lint --fix && yarn code:format --write",
     "code:lint": "eslint --ext .js,.jsx,.ts,.tsx \"src/\"",
-    "code:format": "prettier './src/**/**.{js,jsx,ts,tsx}'",
-    "code:check:rules": "eslint --print-config .eslintrc.js | eslint-config-prettier-check"
+    "code:format": "prettier ./src/**/**.{js,jsx,ts,tsx}",
+    "code:check:rules": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
+    "start": "serverless offline start --dontPrintOutput"
   },
   "dependencies": {
+    "aws-lambda": "^1.0.6",
     "aws-sdk": "^2.763.0",
     "source-map-support": "^0.5.10"
   },
@@ -29,6 +31,6 @@
     "webpack": "^4.29.0",
     "webpack-node-externals": "^1.7.2"
   },
-  "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
+  "author": "Damon Miller <damonmiller513@gmail.com>",
   "license": "MIT"
 }
