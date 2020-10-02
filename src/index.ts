@@ -29,46 +29,33 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     };
   }
 
-  const options: APIEmail = JSON.parse(body);
+  const messages: APIEmail[] = JSON.parse(body);
 
-  const email = new Email(
-    options.from,
-    options.to,
-    options.subject,
-    options.body.text,
-    options.body.html,
-    {
-      cc: options.cc,
-      bcc: options.bcc,
-      replyTo: options.replyTo,
-    },
-  );
+  messages.forEach((message) => {
+    const email = new Email(
+      message.from,
+      message.to,
+      message.subject,
+      message.body.text,
+      message.body.html,
+      {
+        cc: message.cc,
+        bcc: message.bcc,
+        replyTo: message.replyTo,
+      },
+    );
+    email.send();
+  });
 
-  try {
-    await email.send();
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(
-        {
-          message: `Message sent successfully!`,
-          input: event,
-        },
-        null,
-        2,
-      ),
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify(
-        {
-          message: `Message failed! ${error.message}`,
-          input: event,
-        },
-        null,
-        2,
-      ),
-    };
-  }
+  return {
+    statusCode: 200,
+    body: JSON.stringify(
+      {
+        message: `Messages queued!`,
+        input: event,
+      },
+      null,
+      2,
+    ),
+  };
 };
