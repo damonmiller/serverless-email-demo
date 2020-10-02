@@ -1,8 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-import * as AWS from 'aws-sdk';
-
-const ses = new AWS.SES({ apiVersion: '2010-12-01' });
+import { Email } from './Email';
 
 interface APIEmail {
   from: string;
@@ -33,34 +31,21 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
   const options: APIEmail = JSON.parse(body);
 
-  const params: AWS.SES.SendEmailRequest = {
-    Source: options.from,
-    Destination: {
-      ToAddresses: options.to,
-      CcAddresses: options.cc,
-      BccAddresses: options.bcc,
+  const email = new Email(
+    options.from,
+    options.to,
+    options.subject,
+    options.body.text,
+    options.body.html,
+    {
+      cc: options.cc,
+      bcc: options.bcc,
+      replyTo: options.replyTo,
     },
-    ReplyToAddresses: options.replyTo,
-    Message: {
-      Subject: {
-        Charset: 'UTF-8',
-        Data: options.subject,
-      },
-      Body: {
-        Text: {
-          Charset: 'UTF-8',
-          Data: JSON.stringify(options.body.text),
-        },
-        Html: {
-          Charset: 'UTF-8',
-          Data: JSON.stringify(options.body.html),
-        },
-      },
-    },
-  };
+  );
 
   try {
-    await ses.sendEmail(params).promise();
+    await email.send();
 
     return {
       statusCode: 200,
